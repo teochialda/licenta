@@ -1,0 +1,227 @@
+<div>
+    <div class="card">
+      <h5 class="card-header">Person Management</h5>
+      <div class="card-body">
+        <button *ngIf="user.role==='ADMIN'" type="button" class="btn btn-primary" data-bs-toggle="modal" data-bs-target="#exampleModalToggle">
+          Add person
+        </button>
+        <br><br>
+        <table class="table table-striped table-hover">
+          <thead class="bg-info">
+            <tr>
+              <th scope="col">#</th>
+              <th scope="col">Id</th>
+              <th scope="col">Name</th>
+              <th scope="col">Age</th>
+              <th scope="col">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr *ngFor="let tempPerson of persons; let i = index">
+              <th scope="row">{{i + 1}}</th>
+              <td scope="col">{{tempPerson.id}}</td>
+              <td scope="col">{{tempPerson.name}}</td>
+              <td scope="col">{{tempPerson.age}}</td>
+              <td scope="col">
+                <button type="button" class="btn btn-primary" style='margin-right:20px'
+                  (click)="saveModifyId(tempPerson.id)" data-bs-toggle="modal" data-bs-target="#exampleModalCenter1">
+                  Modify person
+                </button>
+                <button *ngIf="user.role==='ADMIN'" type="button" class="btn btn-primary" style='margin-right:20px'
+                  (click)="deletePerson(tempPerson.id)">
+                  Delete person
+                </button>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+  
+        <div class="modal fade" id="exampleModalToggle" aria-hidden="true" aria-labelledby="exampleModalToggleLabel"
+          tabindex="-1">
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalToggleLabel">Add person</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <form [formGroup]="addPersonFormGroup">
+                  <div class="mb-3">
+                    <label for="nameField" class="mb-3">Name</label>
+                    <input formControlName="name" type="text" placeholder="Name..." class="form-control" touched="0"
+                      required id="nameField">
+                    <div *ngIf="name.invalid && (name.dirty || name.touched)" class="alert alert-danger mt-1">
+                      <div *ngIf="name.errors?.['required']">
+                        Name is required
+                      </div>
+  
+                      <div *ngIf="name.errors?.['minlength']">
+                        Name must be at least 2 characters long
+                      </div>
+                    </div>
+                  </div>
+                  <div class="mb-3">
+                    <label for="addressField" class="col-form-label">Address</label>
+                    <input formControlName="address" type="text" placeholder="Address..." class="form-control" touched="0"
+                      required id="addressField">
+                    <div *ngIf="address.invalid && (address.dirty || address.touched)" class="alert alert-danger mt-1">
+                      <div *ngIf="address.errors?.['required']">
+                        Address is required
+                      </div>
+  
+                      <div *ngIf="address.errors?.['minlength']">
+                        Address must be at least 2 characters long
+                      </div>
+                    </div>
+                  </div>
+                  <div class="mb-3">
+                    <label for="ageField" class="col-form-label">Age</label>
+                    <input formControlName="age" type="number" placeholder="Age..." min="0" max="100" class="form-control"
+                      touched="0" required id="ageField">
+                    <div *ngIf="age.invalid && (age.dirty || age.touched)" class="alert alert-danger mt-1">
+                      <div *ngIf="age.errors?.['required']">
+                        Age is required
+                      </div>
+  
+                      <div *ngIf="age.errors?.['min']">
+                        Age must be greater than 0
+                      </div>
+  
+                      <div *ngIf="age.errors?.['max']">
+                        Age must be smaller than 100
+                      </div>
+                    </div>
+                  </div>
+                </form>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button class="btn btn-primary" data-bs-target="#exampleModalToggle2" data-bs-toggle="modal" [disabled]="!addPersonFormGroup.valid" (click)="addPersonJr()">Add user for person</button>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="modal fade" id="exampleModalToggle2" aria-hidden="true" aria-labelledby="exampleModalToggleLabel2"
+          tabindex="-1">
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h1 class="modal-title fs-5" id="exampleModalToggleLabel2">Add user</h1>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <form [formGroup]="addUserFormGroup">
+                  <div class="mb-3">
+                      <label for="usernameField" class="col-form-label">Username</label>
+                      <input formControlName="username" type="text" placeholder="Username..."
+                          class="form-control" touched="0" required id="usernameField">
+                      <div *ngIf="username.invalid && (username.dirty || username.touched)"
+                          class="alert alert-danger mt-1">
+                          <div *ngIf="username.errors?.['required']">
+                              Username is required
+                          </div>
+  
+                          <div *ngIf="username.errors?.['minlength']">
+                              Username must be at least 2 characters long
+                          </div>
+                      </div>
+                  </div>
+                  <div class="mb-3">
+                      <label for="passwordField" class="col-form-label">Password</label>
+                      <input formControlName="password" type="text" placeholder="Password..."
+                          class="form-control" touched="0" required id="passwordField">
+                      <div *ngIf="password.invalid && (password.dirty || password.touched)"
+                          class="alert alert-danger mt-1">
+                          <div *ngIf="password.errors?.['required']">
+                              Password is required
+                          </div>
+  
+                          <div *ngIf="password.errors?.['minlength']">
+                              Password must be at least 2 characters long
+                          </div>
+                      </div>
+                  </div>
+                  <div class="mb-3">
+                      <label for="roleField" class="col-form-label">Role</label>
+                      <input formControlName="role" type="text" placeholder="Role..." class="form-control"
+                          touched="0" required id="roleField">
+                      <div *ngIf="role.invalid && (role.dirty || role.touched)"
+                          class="alert alert-danger mt-1">
+                          <div *ngIf="role.errors?.['required']">
+                              Role is required
+                          </div>
+                      </div>
+                  </div>
+              </form>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button class="btn btn-primary" data-bs-target="#exampleModalToggle2" data-bs-dismiss="modal" [disabled]="!addUserFormGroup.valid" (click)="addPerson()">Save changes</button>
+              </div>
+            </div>
+          </div>
+        </div>
+  
+        <div class="modal fade" id="exampleModalCenter1" tabindex="-1" role="dialog"
+          aria-labelledby="exampleModalCenter1Title" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="exampleModalCenter1Title">Modify person</h5>
+                <button type="button" class="close" data-bs-dismiss="modal" aria-label="Close">
+                  <span aria-hidden="true">&times;</span>
+                </button>
+              </div>
+              <div class="modal-body">
+                <form [formGroup]="modifyPersonFormGroup">
+                  <div *ngIf="personM1">
+                    <div class="mb-3">
+                      <label for="nameMField" class="col-form-label">Name</label>
+                      <input formControlName="nameM" type="text" value={{personM1.name}} class="form-control" touched="0"
+                        id="nameMField">
+                      <div *ngIf="nameM.invalid && (nameM.dirty || nameM.touched)" class="alert alert-danger mt-1">
+                        <div *ngIf="nameM.errors?.['minlength']">
+                          Name must be at least 2 characters long
+                        </div>
+                      </div>
+                      <div class="mb-3">
+                        <label for="addressMField" class="col-form-label">Address</label>
+                        <input formControlName="addressM" type="text" value={{personM1.address}} class="form-control"
+                          touched="0" id="addressMField">
+                        <div *ngIf="addressM.invalid && (addressM.dirty || addressM.touched)"
+                          class="alert alert-danger mt-1">
+                          <div *ngIf="addressM.errors?.['minlength']">
+                            Address must be at least 2 characters long
+                          </div>
+                        </div>
+                      </div>
+                      <div class="mb-3">
+                        <label for="ageMField" class="col-form-label">Age</label>
+                        <input formControlName="ageM" type="number" value={{personM1.age}} min="1" max="100"
+                          class="form-control" touched="0" id="ageMField">
+                        <div *ngIf="ageM.invalid && (ageM.dirty || ageM.touched)" class="alert alert-danger mt-1">
+                          <div *ngIf="ageM.errors?.['min']">
+                            Age must be greater than 0
+                          </div>
+  
+                          <div *ngIf="ageM.errors?.['max']">
+                            Age must be smaller than 100
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </form>
+              </div>
+              <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-primary" [disabled]="!modifyPersonFormGroup.valid"
+                  (click)="modifyPerson()" data-bs-dismiss="modal">Save changes</button>
+              </div>
+            </div>
+          </div>
+        </div>
+  
+      </div>
+    </div>
+  </div>
